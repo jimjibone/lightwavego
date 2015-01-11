@@ -3,11 +3,17 @@ Package lwgo is a LightwaveRF library for the Raspberry Pi.
 
 Basic usage:
 
-    import "github.com/jimjibone/lwgo"
+    import (
+        "github.com/jimjibone/lwgo"
+        "fmt"
+    )
 
     func main() {
         lwtx := lwgo.NewLwTx()
-        lightOn := lwgo.LwBuffer{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}
+        lightOn, err := lwgo.NewMessage([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}, 2, time.Millisecond * 500)
+        if err != nil {
+            fmt.Error(err)
+        }
         lwtx.Send(lightOn)
     }
  */
@@ -154,6 +160,7 @@ import "C"
 import (
     "fmt"
     "errors"
+    "time"
 )
 
 func wiringPiSetup() error {
@@ -195,10 +202,14 @@ type LwTx struct {
     Period int
 }
 
-// LwBuffer is a 10-byte buffer containing the command you wish to send.
-type LwBuffer [10]byte
+// LwMessage contains the command you wish to send along with repeat configuration.
+type LwMessage struct {
+    Buffer [10]byte
+    Repeats int // repeat transmission more than once?
+    Period time.Duration // for repeats
+}
 
-// lwCommand is a helper struct to pull out the meaning of a LwBuffer, useful
+// lwCommand is a helper struct to pull out the meaning of a LwMessage, useful
 // for logging.
 type lwCommand struct {
     parameter string
@@ -222,42 +233,70 @@ func NewLwTx() *LwTx {
     }
 }
 
-// Send a constructed LwBuffer via the 433 MHz module.
-func (lw *LwTx) Send(buffer LwBuffer) {
+// Send a constructed LwMessage via the 433 MHz module.
+func (lw *LwTx) Send(message LwMessage) {
     // Check that the transmitter is setup.
     if lw.setup == false {
         lw.setupPins()
     }
 
-    //fmt.Println("LwTx::Run: send:", buffer)
+    //fmt.Println("LwTx::Run: send:", message)
 
+    for count := message.Repeats; count >= 0; count-- {
     // Send the message.
     C.sendBytes(C.int(lw.Pin), C.int(lw.Onval),
                 C.int(lw.Offval), C.int(lw.Period),
                 C.int(lw.Repeats), C.int(lw.Translate),
-                C.byte(buffer[0]), C.byte(buffer[1]),
-                C.byte(buffer[2]), C.byte(buffer[3]),
-                C.byte(buffer[4]), C.byte(buffer[5]),
-                C.byte(buffer[6]), C.byte(buffer[7]),
-                C.byte(buffer[8]), C.byte(buffer[9]))
+                    C.byte(message.Buffer[0]), C.byte(message.Buffer[1]),
+                    C.byte(message.Buffer[2]), C.byte(message.Buffer[3]),
+                    C.byte(message.Buffer[4]), C.byte(message.Buffer[5]),
+                    C.byte(message.Buffer[6]), C.byte(message.Buffer[7]),
+                    C.byte(message.Buffer[8]), C.byte(message.Buffer[9]))
+
+        // Wait if there are remaining repeats.
+        if count > 0 {
+            time.Sleep(message.Period)
+        }
+    }
 }
 
-// Convert the LwBuffer to a lwCommand.
-func (buf LwBuffer) command() lwCommand {
+func NewMessage(buffer []byte, repeats int, period time.Duration) (LwMessage, error) {
+    if len(buffer) <= 0 {
+        return LwMessage{}, fmt.Errorf("input buffer size is too small: %d", len(buffer))
+    } else if len(buffer) > 10 {
+        return LwMessage{}, fmt.Errorf("input buffer size is too big: %d", len(buffer))
+    } else {
+        if repeats < 0 {
+            repeats = 0
+        }
+        if period < 100 * time.Millisecond {
+            period = 100 * time.Millisecond
+        }
+
+        message := LwMessage{Repeats: repeats, Period: period}
+        for i, val := range buffer {
+            message.Buffer[i] = val;
+        }
+        return message, nil
+    }
+}
+
+// Convert the LwMessage to a lwCommand.
+func (message LwMessage) command() lwCommand {
     // parameter (2 [0,1])
     // device    (1 [2])
     // command   (1 [3])
     // address   (5 [4-8])
     // room      (1 [9])
     cmd := lwCommand{
-        device: int(buf[2]),
-        address: buf[4:8],
-        room: int(buf[9]),
+        device: int(message.Buffer[2]),
+        address: message.Buffer[4:8],
+        room: int(message.Buffer[9]),
     }
 
-    command := int(buf[3])
-    param := int(buf[1])
-    param += int(buf[0] << 4)
+    command := int(message.Buffer[3])
+    param := int(message.Buffer[1])
+    param += int(message.Buffer[0] << 4)
 
     // Get the parameter
     switch {
@@ -332,15 +371,17 @@ func (cmd lwCommand) String() string {
                       ", Room: ", cmd.room)
 }
 
-// Get a nicely formatted string version of the LwBuffer.
-func (buf LwBuffer) String() string {
-    return fmt.Sprint(buf.command().String())
+// Get a nicely formatted string version of the LwMessage.
+func (message LwMessage) String() string {
+    return fmt.Sprint(message.command().String(),
+                      ", Repeats: ", message.Repeats,
+                      ", Period: ", message.Period)
 }
 
-// Raw returns the raw byte buffer stored within the LwBuffer.
-func (buf LwBuffer) Raw() []byte {
-    out := make([]byte, len(buf))
-    for i, val := range buf {
+// Raw returns the raw byte buffer stored within the LwMessage.
+func (message LwMessage) Raw() []byte {
+    out := make([]byte, len(message.Buffer))
+    for i, val := range message.Buffer {
         out[i] = val
     }
     return out
