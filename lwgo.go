@@ -159,17 +159,16 @@ import "C"
 
 import (
     "fmt"
-    "errors"
     "time"
 )
 
 func wiringPiSetup() error {
     if -1 == int(C.wiringPiSetup()) {
-        return errors.New("lwgo::init: wiringPiSetup() failed to call")
+        return fmt.Errorf("lwgo::init: wiringPiSetup() failed to call")
     }
     err := C.piHiPri(C.int(99));
     if err < 0 {
-        return errors.New("lwgo::init: piHiPri() failed to set thread priority")
+        return fmt.Errorf("lwgo::init: piHiPri() failed to set thread priority")
     }
     return nil
 }
@@ -243,10 +242,10 @@ func (lw *LwTx) Send(message LwMessage) {
     //fmt.Println("LwTx::Run: send:", message)
 
     for count := message.Repeats; count >= 0; count-- {
-    // Send the message.
-    C.sendBytes(C.int(lw.Pin), C.int(lw.Onval),
-                C.int(lw.Offval), C.int(lw.Period),
-                C.int(lw.Repeats), C.int(lw.Translate),
+        // Send the message.
+        C.sendBytes(C.int(lw.Pin), C.int(lw.Onval),
+                    C.int(lw.Offval), C.int(lw.Period),
+                    C.int(lw.Repeats), C.int(lw.Translate),
                     C.byte(message.Buffer[0]), C.byte(message.Buffer[1]),
                     C.byte(message.Buffer[2]), C.byte(message.Buffer[3]),
                     C.byte(message.Buffer[4]), C.byte(message.Buffer[5]),
