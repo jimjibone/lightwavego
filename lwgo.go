@@ -1,3 +1,16 @@
+/*
+LightwaveRF library for the Raspberry Pi written in Go.
+
+Basic usage:
+
+    import "github.com/jimjibone/lwgo"
+
+    func main() {
+        lwtx := lwgo.NewLwTx()
+        lightOn  := lwgo.LwBuffer{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}
+        lwtx.Send(lightOn)
+    }
+ */
 package lwgo
 
 /*
@@ -161,16 +174,18 @@ func init() {
     }
 }
 
-type LwBuffer [10]byte
-
-type LwCommand struct {
-    parameter string
-    device int
-    command string
-    address []byte
-    room int
+func (lw *LwTx) setupPins() {
+    C.pinMode(C.int(lw.Pin), C.OUTPUT)
+    C.digitalWrite(C.int(lw.Pin), C.LOW)
+    lw.setup = true
 }
 
+/*
+Send LightwaveRF commands using this struct and its functions.
+The best way to create this struct, with all appropriate defaults, is to do the
+following e.g:
+    lwtx := lwgo.NewLwTx()
+ */
 type LwTx struct {
     setup bool
     Pin int
@@ -180,6 +195,19 @@ type LwTx struct {
     Period int
 }
 
+// A 10-byte buffer containing the command you wish to send.
+type LwBuffer [10]byte
+
+// A helper struct to pull out the meaning of a LwBuffer, useful for logging.
+type LwCommand struct {
+    parameter string
+    device int
+    command string
+    address []byte
+    room int
+}
+
+// Get a pointer to a LwTx initialised with recommended defaults.
 func NewLwTx() *LwTx {
     // Apply defaults, allowing the user to change them afterwards if needed.
     return &LwTx{
@@ -192,12 +220,7 @@ func NewLwTx() *LwTx {
     }
 }
 
-func (lw *LwTx) SetupPins() {
-    C.pinMode(C.int(lw.Pin), C.OUTPUT)
-    C.digitalWrite(C.int(lw.Pin), C.LOW)
-    lw.setup = true
-}
-
+// Send a constructed LwBuffer via the 433 MHz module.
 func (lw *LwTx) Send(buffer LwBuffer) {
     // Check that the transmitter is setup.
     if lw.setup == false {
@@ -217,6 +240,7 @@ func (lw *LwTx) Send(buffer LwBuffer) {
                 C.byte(buffer[8]), C.byte(buffer[9]))
 }
 
+// Convert the LwBuffer to a LwCommand.
 func (buf LwBuffer) Command() LwCommand {
     // parameter (2 [0,1])
     // device    (1 [2])
@@ -297,6 +321,7 @@ func (buf LwBuffer) Command() LwCommand {
     return cmd
 }
 
+// Get a string version of the LwCommand.
 func (cmd LwCommand) String() string {
     return fmt.Sprint("Parameter: ", cmd.parameter,
                       ", Device: ", cmd.device,
@@ -305,10 +330,12 @@ func (cmd LwCommand) String() string {
                       ", Room: ", cmd.room)
 }
 
+// Get a nicely formatted string version of the LwBuffer.
 func (buf LwBuffer) String() string {
     return fmt.Sprint(buf.Command().String())
 }
 
+// Get the raw byte buffer within the LwBuffer.
 func (buf LwBuffer) Raw() []byte {
     out := make([]byte, len(buf))
     for i, val := range buf {
