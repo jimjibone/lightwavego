@@ -1,6 +1,8 @@
 # lwgo
 
-LightwaveRF library for the Raspberry Pi written in Go. [![GoDoc](https://godoc.org/github.com/jimjibone/lwgo?status.svg)](https://godoc.org/github.com/jimjibone/lwgo)
+[![GoDoc](https://godoc.org/github.com/jimjibone/lwgo?status.svg)](https://godoc.org/github.com/jimjibone/lwgo)
+
+LightwaveRF library for the Raspberry Pi written in Go.
 
 See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry Pi from which this is based.
 
