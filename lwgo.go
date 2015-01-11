@@ -1,5 +1,5 @@
 /*
-LightwaveRF library for the Raspberry Pi written in Go.
+Package lwgo is a LightwaveRF library for the Raspberry Pi.
 
 Basic usage:
 
@@ -181,7 +181,7 @@ func (lw *LwTx) setupPins() {
 }
 
 /*
-Send LightwaveRF commands using this struct and its functions.
+LwTx contains the configuration of your LightwaveRF setup.
 The best way to create this struct, with all appropriate defaults, is to do the
 following e.g:
     lwtx := lwgo.NewLwTx()
@@ -195,10 +195,11 @@ type LwTx struct {
     Period int
 }
 
-// A 10-byte buffer containing the command you wish to send.
+// LwBuffer is a 10-byte buffer containing the command you wish to send.
 type LwBuffer [10]byte
 
-// A helper struct to pull out the meaning of a LwBuffer, useful for logging.
+// lwCommand is a helper struct to pull out the meaning of a LwBuffer, useful
+// for logging.
 type lwCommand struct {
     parameter string
     device int
@@ -207,7 +208,8 @@ type lwCommand struct {
     room int
 }
 
-// Get a pointer to a LwTx initialised with recommended defaults.
+// NewLwTx returns a pointer to a LwTx struct initialised with the recommended
+// defaults.
 func NewLwTx() *LwTx {
     // Apply defaults, allowing the user to change them afterwards if needed.
     return &LwTx{
@@ -335,7 +337,7 @@ func (buf LwBuffer) String() string {
     return fmt.Sprint(buf.command().String())
 }
 
-// Get the raw byte buffer within the LwBuffer.
+// Raw returns the raw byte buffer stored within the LwBuffer.
 func (buf LwBuffer) Raw() []byte {
     out := make([]byte, len(buf))
     for i, val := range buf {
