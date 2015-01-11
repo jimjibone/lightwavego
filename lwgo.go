@@ -145,11 +145,11 @@ import (
 
 func wiringPiSetup() error {
     if -1 == int(C.wiringPiSetup()) {
-        return errors.New("LwTx::init: wiringPiSetup() failed to call")
+        return errors.New("lwgo::init: wiringPiSetup() failed to call")
     }
     err := C.piHiPri(C.int(99));
     if err < 0 {
-        return errors.New("LwTx::init: piHiPri() failed to set thread priority")
+        return errors.New("lwgo::init: piHiPri() failed to set thread priority")
     }
     return nil
 }
@@ -157,7 +157,7 @@ func wiringPiSetup() error {
 func init() {
     err := wiringPiSetup()
     if err != nil {
-        fmt.Println("LwTx::init: FAILED!")
+        fmt.Println("lwgo::init: failed")
     }
 }
 
