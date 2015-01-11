@@ -7,7 +7,7 @@ Basic usage:
 
     func main() {
         lwtx := lwgo.NewLwTx()
-        lightOn  := lwgo.LwBuffer{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}
+        lightOn := lwgo.LwBuffer{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}
         lwtx.Send(lightOn)
     }
  */
@@ -199,7 +199,7 @@ type LwTx struct {
 type LwBuffer [10]byte
 
 // A helper struct to pull out the meaning of a LwBuffer, useful for logging.
-type LwCommand struct {
+type lwCommand struct {
     parameter string
     device int
     command string
@@ -224,7 +224,7 @@ func NewLwTx() *LwTx {
 func (lw *LwTx) Send(buffer LwBuffer) {
     // Check that the transmitter is setup.
     if lw.setup == false {
-        lw.SetupPins()
+        lw.setupPins()
     }
 
     //fmt.Println("LwTx::Run: send:", buffer)
@@ -240,14 +240,14 @@ func (lw *LwTx) Send(buffer LwBuffer) {
                 C.byte(buffer[8]), C.byte(buffer[9]))
 }
 
-// Convert the LwBuffer to a LwCommand.
-func (buf LwBuffer) Command() LwCommand {
+// Convert the LwBuffer to a lwCommand.
+func (buf LwBuffer) command() lwCommand {
     // parameter (2 [0,1])
     // device    (1 [2])
     // command   (1 [3])
     // address   (5 [4-8])
     // room      (1 [9])
-    cmd := LwCommand{
+    cmd := lwCommand{
         device: int(buf[2]),
         address: buf[4:8],
         room: int(buf[9]),
@@ -321,8 +321,8 @@ func (buf LwBuffer) Command() LwCommand {
     return cmd
 }
 
-// Get a string version of the LwCommand.
-func (cmd LwCommand) String() string {
+// Get a string version of the lwCommand.
+func (cmd lwCommand) String() string {
     return fmt.Sprint("Parameter: ", cmd.parameter,
                       ", Device: ", cmd.device,
                       ", Command: ", cmd.command,
@@ -332,7 +332,7 @@ func (cmd LwCommand) String() string {
 
 // Get a nicely formatted string version of the LwBuffer.
 func (buf LwBuffer) String() string {
-    return fmt.Sprint(buf.Command().String())
+    return fmt.Sprint(buf.command().String())
 }
 
 // Get the raw byte buffer within the LwBuffer.
