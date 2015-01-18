@@ -11,14 +11,14 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 
 ### TX
 
-- Connect the data pin (to the default) WiringPi pin 3. This is GPIO pin 15 on the Pi.
+- Connect the data pin (to the default) Broadcom pin 22. This is GPIO pin 15 on the Pi.
 - Connect the VCC to the Pi's 3.3V and GND to the Pi's GND.
 - For best performance add an antenna to your TX module. This can just be a quarter-wavelength wire soldered to the module. 433 MHz quarter wavelength is 173 mm but I found best performance with my module using a length of 165 mm.
 
 
 ## Installation
 
-- [WiringPi](http://wiringpi.com/download-and-install/): This is required to control the GPIO pins on the Raspberry Pi
+- [pigpio](http://abyz.co.uk/rpi/pigpio/download.html): This is required to control the GPIO pins on the Raspberry Pi
 - `go get github.com/jimjibone/lwgo`
 - `go install github.com/jimjibone/lwgo`
 
@@ -30,4 +30,4 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 - `go get github.com/jimjibone/lwgo` (if not done already)
 - `go install github.com/jimjibone/lwgo` (if not done already)
 - `go build examples/blink.co`
-- `sudo ./blink` (sudo required for WiringPi GPIO access)
+- `sudo ./blink` (sudo required for GPIO access)
