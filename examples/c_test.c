@@ -93,7 +93,7 @@ void add_delay(int us_delay)
     pulses[pulse_count-1].usDelay += us_delay;
 }
 
-int send_pulses(int pin)
+bool send_pulses(int pin)
 {
     bool ok = true;
     int lastMode = gpioGetMode(pin);
