@@ -28,7 +28,6 @@ import "C"
 
 import (
     "fmt"
-    "time"
     "unsafe"
 )
 
@@ -58,9 +57,7 @@ type LwTx struct {
 }
 
 // LwMessage contains the command you wish to send along with repeat configuration.
-type LwMessage struct {
-    Buffer [10]byte
-}
+type LwMessage [10]byte
 
 // lwCommand is a helper struct to pull out the meaning of a LwMessage, useful
 // for logging.
@@ -85,12 +82,14 @@ func NewLwTx() *LwTx {
     }
 }
 
-func byteSliceToCArray(byteSlice [10]byte) unsafe.Pointer {
-    var array = unsafe.Pointer(C.calloc(C.size_t(len(byteSlice)), 1))
+// Convert the LwMessage contents to a C array that we can pass to our C
+// counterpart.
+func messageToCArray(message LwMessage) unsafe.Pointer {
+    var array = unsafe.Pointer(C.calloc(C.size_t(len(message)), 1))
     var arrayptr = uintptr(array)
 
-    for i := 0; i < len(byteSlice); i ++ {
-        *(*C.byte)(unsafe.Pointer(arrayptr)) = C.byte(byteSlice[i])
+    for i := 0; i < len(message); i ++ {
+        *(*C.byte)(unsafe.Pointer(arrayptr)) = C.byte(message[i])
         arrayptr++
     }
 
@@ -109,7 +108,7 @@ func (lw *LwTx) Send(message LwMessage) {
     }
 
     // Create a C byte array from the Go byte slice.
-    buffer := byteSliceToCArray(message.Buffer)
+    buffer := messageToCArray(message)
     defer C.free(buffer)
 
     // Send the message.
@@ -119,29 +118,22 @@ func (lw *LwTx) Send(message LwMessage) {
                                C.int(translate),
                                C.int(invert),
                                (*C.byte)(buffer),
-                               C.int(len(message.Buffer))))
+                               C.int(len(message))))
 
     if result == 0 {
         fmt.Println("lwgo::Send: send FAIL!")
     }
 }
 
-func NewMessage(buffer []byte, repeats int, period time.Duration) (LwMessage, error) {
+func NewMessage(buffer []byte) (LwMessage, error) {
     if len(buffer) <= 0 {
         return LwMessage{}, fmt.Errorf("input buffer size is too small: %d", len(buffer))
     } else if len(buffer) > 10 {
         return LwMessage{}, fmt.Errorf("input buffer size is too big: %d", len(buffer))
     } else {
-        if repeats < 0 {
-            repeats = 0
-        }
-        if period < 100 * time.Millisecond {
-            period = 100 * time.Millisecond
-        }
-
         message := LwMessage{}
         for i, val := range buffer {
-            message.Buffer[i] = val;
+            message[i] = val;
         }
         return message, nil
     }
@@ -155,14 +147,14 @@ func (message LwMessage) command() lwCommand {
     // address   (5 [4-8])
     // room      (1 [9])
     cmd := lwCommand{
-        device: int(message.Buffer[2]),
-        address: message.Buffer[4:8],
-        room: int(message.Buffer[9]),
+        device: int(message[2]),
+        address: message[4:8],
+        room: int(message[9]),
     }
 
-    command := int(message.Buffer[3])
-    param := int(message.Buffer[1])
-    param += int(message.Buffer[0] << 4)
+    command := int(message[3])
+    param := int(message[1])
+    param += int(message[0] << 4)
 
     // Get the parameter
     switch {
@@ -244,8 +236,8 @@ func (message LwMessage) String() string {
 
 // Raw returns the raw byte buffer stored within the LwMessage.
 func (message LwMessage) Raw() []byte {
-    out := make([]byte, len(message.Buffer))
-    for i, val := range message.Buffer {
+    out := make([]byte, len(message))
+    for i, val := range message {
         out[i] = val
     }
     return out
