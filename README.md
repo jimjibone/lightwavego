@@ -20,7 +20,8 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 
 - [pigpio](http://abyz.co.uk/rpi/pigpio/download.html): This is required to control the GPIO pins on the Raspberry Pi
 - `go get github.com/jimjibone/lwgo`
-- `go install github.com/jimjibone/lwgo`
+- `go install github.com/jimjibone/lwgo/examples/...`
+- `lwblink` and `lwserver` will now both be in your PATH
 
 
 ## Examples
