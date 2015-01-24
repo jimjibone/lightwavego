@@ -1,5 +1,7 @@
 language: go
 
-install: go get golang.org/x/tools/cmd/stringer
+install:
+  - go get -d -v ./
+  - go build -v examples/blink.go
 
-script: go test -v && go build -v examples/blink.go
+script: go test -v
