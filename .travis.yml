@@ -2,6 +2,7 @@ language: go
 
 install:
   - go get -d -v ./
+  - go get github.com/ant0ine/go-json-rest/rest
   - go build -v examples/lwblink/lwblink.go
   - go build -v examples/lwserver/lwserver.go
 
