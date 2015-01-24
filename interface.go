@@ -1,5 +1,5 @@
-// Don't build this file on Raspberry Pi (not linux && not arm)
-// +build !linux,!arm
+// Don't build this file on Raspberry Pi (not arm)
+// +build !arm
 
 package lwgo
 
