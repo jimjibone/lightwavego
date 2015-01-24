@@ -2,7 +2,7 @@ language: go
 
 install:
   - go get -d -v ./
-  - go build -v examples/blink/lwblink.go
-  - go build -v examples/server/lwserver.go
+  - go build -v examples/lwblink/lwblink.go
+  - go build -v examples/lwserver/lwserver.go
 
 script: go test -v

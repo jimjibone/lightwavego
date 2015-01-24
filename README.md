@@ -33,7 +33,7 @@ This is basically the blink example we all know from microelectronics except tha
 - `cd lwgo`
 - `go get github.com/jimjibone/lwgo` (if not done already)
 - `go install github.com/jimjibone/lwgo` (if not done already)
-- `go build examples/blink/lwblink.go`
+- `go build examples/lwblink/lwblink.go`
 - `sudo ./lwblink` (sudo required for GPIO access)
 
 
@@ -42,7 +42,7 @@ This is basically the blink example we all know from microelectronics except tha
 This sets up a simple RESTful JSON server that is able to receive byte buffers of pre-compiled commands and use the library to broadcast them over your transmitter.
 
 - Follow the instructions above for the Blink example, but now do:
-- `go build examples/server/lwserver.go`
+- `go build examples/lwserver/lwserver.go`
 - `sudo ./lwserver` (sudo also required here for the GPIO access)
 - `curl -i -d '{"Buffer":"090f0301050903000102"}' http://localhost:8080/send` will turn a light on to max brightness
 
