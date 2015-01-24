@@ -1,3 +1,5 @@
 language: go
 
+install: go get golang.org/x/tools/cmd/stringer
+
 script: go test -v && go build -v examples/blink.go
