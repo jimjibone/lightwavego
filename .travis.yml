@@ -3,5 +3,6 @@ language: go
 install:
   - go get -d -v ./
   - go build -v examples/blink.go
+  - go build -v examples/server.go
 
 script: go test -v
