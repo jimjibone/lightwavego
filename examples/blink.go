@@ -14,14 +14,14 @@ func main() {
     lwtx := lwgo.NewLwTx()
 
     // Define some messages to test with.
-    lightOn, _ := lwgo.NewMessage([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to max
-    lightDim, _ := lwgo.NewMessage([]byte{0x5,0x4,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to 10
-    lightOff, _ := lwgo.NewMessage([]byte{0x4,0x0,0x3,0x0,0x5,0x9,0x3,0x0,0x1,0x2}) // off
-    lightLast, _ := lwgo.NewMessage([]byte{0x0,0x0,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // on (to last level)
+    lightOn, _ := lwgo.NewBuffer([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to max
+    lightDim, _ := lwgo.NewBuffer([]byte{0x5,0x4,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to 10
+    lightOff, _ := lwgo.NewBuffer([]byte{0x4,0x0,0x3,0x0,0x5,0x9,0x3,0x0,0x1,0x2}) // off
+    lightLast, _ := lwgo.NewBuffer([]byte{0x0,0x0,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // on (to last level)
 
     // Define some commands to test them also.
     commandOn := lwgo.LwCommand{
-        Command: "Dim",
+        Command: lwgo.Dim,
         Value: 31,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
@@ -29,7 +29,7 @@ func main() {
     }
 
     commandDim := lwgo.LwCommand{
-        Command: "Dim",
+        Command: lwgo.Dim,
         Value: 20,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
@@ -37,7 +37,7 @@ func main() {
     }
 
     commandOff := lwgo.LwCommand{
-        Command: "Off",
+        Command: lwgo.Off,
         Value: 0,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
@@ -45,7 +45,7 @@ func main() {
     }
 
     commandLast := lwgo.LwCommand{
-        Command: "On",
+        Command: lwgo.On,
         Value: 0,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
@@ -55,19 +55,19 @@ func main() {
     // Send a couple of these messages.
     for i := 0; i < 1; i++ {
         fmt.Println("lightOn:", lightOn)
-        lwtx.Send(lightOn)
+        lwtx.SendBuffer(lightOn)
         time.Sleep(4 * time.Second)
 
         fmt.Println("lightDim:", lightDim)
-        lwtx.Send(lightDim)
+        lwtx.SendBuffer(lightDim)
         time.Sleep(4 * time.Second)
 
         fmt.Println("lightOff:", lightOff)
-        lwtx.Send(lightOff)
+        lwtx.SendBuffer(lightOff)
         time.Sleep(4 * time.Second)
 
         fmt.Println("lightLast:", lightLast)
-        lwtx.Send(lightLast)
+        lwtx.SendBuffer(lightLast)
         time.Sleep(4 * time.Second)
 
         fmt.Println("commandOn:", commandOn)

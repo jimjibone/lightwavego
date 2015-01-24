@@ -20,29 +20,6 @@ Basic usage:
 package lwgo
 
 /*
-#cgo CFLAGS: -std=c99
-#cgo LDFLAGS: -lpigpio -lpthread -lrt
-#include "lwgo.h"
-*/
-import "C"
-
-import (
-    "fmt"
-    "unsafe"
-)
-
-func init() {
-    if int(C.init_gpio()) == 0 {
-        C.gpioTerminate()
-        fmt.Println("lwgo::init: failed")
-    }
-}
-
-func Shutdown() {
-    C.gpioTerminate()
-}
-
-/*
 LwTx contains the configuration of your LightwaveRF setup.
 The best way to create this struct, with all appropriate defaults, is to do the
 following e.g:
@@ -69,41 +46,12 @@ func NewLwTx() *LwTx {
     }
 }
 
-// Send a constructed LwMessage via the 433 MHz module.
-func (lw *LwTx) Send(message LwMessage) { // TODO: return `error`
-    // Convert the boolean types to ints for passing to C.
-    var translate, invert int
-    if lw.Translate {
-        translate = 1
-    }
-    if lw.Invert {
-        invert = 1
-    }
-
-    // Create a C byte buffer from the Go byte slice.
-    var buffer = unsafe.Pointer(C.calloc(C.size_t(len(message)), 1))
-    var bufferptr = uintptr(buffer)
-    for i := 0; i < len(message); i ++ {
-        *(*C.byte)(unsafe.Pointer(bufferptr)) = C.byte(message[i])
-        bufferptr++
-    }
-    defer C.free(buffer)
-
-    // Send the message.
-    result := int(C.send_bytes(C.int(lw.Pin),
-                               C.int(lw.Period),
-                               C.int(lw.Repeats),
-                               C.int(translate),
-                               C.int(invert),
-                               (*C.byte)(buffer),
-                               C.int(len(message))))
-
-    if result == 0 {
-        fmt.Println("lwgo::Send: send FAIL!")
-    }
+// Send a constructed LwBuffer via the 433 MHz module.
+func (lw *LwTx) SendBuffer(buffer LwBuffer) error {
+    return lw.sendBuffer(buffer)
 }
 
 // Send a constructed LwCommand via the 433 MHz module.
-func (lw *LwTx) SendCommand(command LwCommand) { // TODO: return `error`
-    lw.Send(command.Message())
+func (lw *LwTx) SendCommand(command LwCommand) error {
+    return lw.SendBuffer(command.Buffer())
 }
