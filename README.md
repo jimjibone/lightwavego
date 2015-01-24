@@ -31,3 +31,16 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 - `go install github.com/jimjibone/lwgo` (if not done already)
 - `go build examples/blink.co`
 - `sudo ./blink` (sudo required for GPIO access)
+
+
+## Development
+
+For development there are some other requirements. Don't worry about these if you are just building to run.
+
+### `go generate`
+
+To automatically create a nice human friendly representation of the various constants within `types.go` we will use `stringer` along with `go generate`. When we call `go generate` on the command line, `generate` will automatically find the stringer command within the types.go file and execute it. It will create a new go file that will help translate the constants into strings, easy.
+
+- `go get golang.org/x/tools/cmd/stringer`
+- `go generate`
+- Build away.
