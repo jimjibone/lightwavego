@@ -1,29 +1,29 @@
 /*
-Package lwgo is a LightwaveRF library for the Raspberry Pi.
+Package lightwavego is a LightwaveRF package for the Raspberry Pi.
 
 Basic usage:
 
     import (
-        "github.com/jimjibone/lwgo"
+        "github.com/jimjibone/lightwavego"
         "fmt"
     )
 
     func main() {
-        lwtx := lwgo.NewLwTx()
-        lightOn, err := lwgo.NewMessage([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}, 2, time.Millisecond * 500)
+        lwtx := lightwavego.NewLwTx()
+        lightOn, err := lightwavego.NewMessage([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}, 2, time.Millisecond * 500)
         if err != nil {
             fmt.Error(err)
         }
         lwtx.Send(lightOn)
     }
  */
-package lwgo
+package lightwavego
 
 /*
 LwTx contains the configuration of your LightwaveRF setup.
 The best way to create this struct, with all appropriate defaults, is to do the
 following e.g:
-    lwtx := lwgo.NewLwTx()
+    lwtx := lightwavego.NewLwTx()
  */
 type LwTx struct {
     Pin int         // 22

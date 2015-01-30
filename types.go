@@ -1,4 +1,4 @@
-package lwgo
+package lightwavego
 
 import "fmt"
 
@@ -111,7 +111,7 @@ func (cmd LwCommand) Buffer() LwBuffer {
 
         // Unknown case!
         default: {
-            fmt.Println("lwgo::Message: cannot determine case for Command: ", cmd)
+            fmt.Println("lightwavego::Message: cannot determine case for Command: ", cmd)
         }
     }
 
@@ -237,9 +237,13 @@ func (buffer LwBuffer) Command() (LwCommand, error) {
 }
 
 // String gives you a human friendly version of the LwBuffer.
-func (buffer LwBuffer) String() (string, error) {
+func (buffer LwBuffer) String() string {
     cmd, err := buffer.Command()
-    return cmd.String(), err
+    if err != nil {
+        fmt.Println(err);
+        return fmt.Sprint("LwBuffer::String: ERROR: ", err)
+    }
+    return cmd.String()
 }
 
 // String gives you a human friendly version of the LwCommand.

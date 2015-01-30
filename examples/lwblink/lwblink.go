@@ -3,49 +3,49 @@ package main
 import (
     "fmt"
     "time"
-    "github.com/jimjibone/lwgo"
+    "github.com/jimjibone/lightwavego"
 )
 
 func main() {
-    fmt.Println("lwgo blink!")
-    defer lwgo.Shutdown()
+    fmt.Println("lightwavego blink!")
+    defer lightwavego.Shutdown()
 
     // Set up the LightwaveRF TX instance.
-    lwtx := lwgo.NewLwTx()
+    lwtx := lightwavego.NewLwTx()
 
     // Define some messages to test with.
-    lightOn, _ := lwgo.NewBuffer([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to max
-    lightDim, _ := lwgo.NewBuffer([]byte{0x5,0x4,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to 10
-    lightOff, _ := lwgo.NewBuffer([]byte{0x4,0x0,0x3,0x0,0x5,0x9,0x3,0x0,0x1,0x2}) // off
-    lightLast, _ := lwgo.NewBuffer([]byte{0x0,0x0,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // on (to last level)
+    lightOn, _ := lightwavego.NewBuffer([]byte{0x9,0xf,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to max
+    lightDim, _ := lightwavego.NewBuffer([]byte{0x5,0x4,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // dim to 10
+    lightOff, _ := lightwavego.NewBuffer([]byte{0x4,0x0,0x3,0x0,0x5,0x9,0x3,0x0,0x1,0x2}) // off
+    lightLast, _ := lightwavego.NewBuffer([]byte{0x0,0x0,0x3,0x1,0x5,0x9,0x3,0x0,0x1,0x2}) // on (to last level)
 
     // Define some commands to test them also.
-    commandOn := lwgo.LwCommand{
-        Command: lwgo.Dim,
+    commandOn := lightwavego.LwCommand{
+        Command: lightwavego.Dim,
         Value: 31,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
         Room: 2,
     }
 
-    commandDim := lwgo.LwCommand{
-        Command: lwgo.Dim,
+    commandDim := lightwavego.LwCommand{
+        Command: lightwavego.Dim,
         Value: 20,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
         Room: 2,
     }
 
-    commandOff := lwgo.LwCommand{
-        Command: lwgo.Off,
+    commandOff := lightwavego.LwCommand{
+        Command: lightwavego.Off,
         Value: 0,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},
         Room: 2,
     }
 
-    commandLast := lwgo.LwCommand{
-        Command: lwgo.On,
+    commandLast := lightwavego.LwCommand{
+        Command: lightwavego.On,
         Value: 0,
         Device: 3,
         Address: []byte{5, 9, 3, 0, 1},

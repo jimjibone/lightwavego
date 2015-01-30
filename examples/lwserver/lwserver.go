@@ -10,15 +10,15 @@ import (
     "time"
     "net/http"
     "encoding/hex"
-    "github.com/jimjibone/lwgo"
+    "github.com/jimjibone/lightwavego"
     "github.com/ant0ine/go-json-rest/rest"
 )
 
-var lwtx *lwgo.LwTx
+var lwtx *lightwavego.LwTx
 
 func main() {
-    fmt.Println("lwgo server starting on port 8080")
-    lwtx = lwgo.NewLwTx()
+    fmt.Println("lightwavego server starting on port 8080")
+    lwtx = lightwavego.NewLwTx()
 
     handler := rest.ResourceHandler{
         EnableRelaxedContentType: true,
@@ -38,7 +38,7 @@ type Command struct {
     Time     time.Time
     Buffer   string
     Bytes    []byte
-    Command  lwgo.LwCommand
+    Command  lightwavego.LwCommand
 }
 
 var lock = sync.RWMutex{}
@@ -68,7 +68,7 @@ func PostSend(w rest.ResponseWriter, r *rest.Request) {
 
     // Convert the raw bytes to LwBuffer format.
     // TODO: handle error
-    buffer, converr := lwgo.NewBuffer(command.Bytes)
+    buffer, converr := lightwavego.NewBuffer(command.Bytes)
     if converr != nil {
         errstring := fmt.Sprint("could not convert input buffer to LwBuffer:", converr)
         rest.Error(w, errstring, 400)

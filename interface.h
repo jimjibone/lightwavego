@@ -1,5 +1,5 @@
 /*
- * lwgo package C counterpart.
+ * lightwavego package C counterpart.
  * Makes use of the pigpio library to send accurately timed messages over the
  * Raspberry Pi's GPIO's for transmission via 433 MHz module.
  *

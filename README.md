@@ -1,6 +1,6 @@
-# lwgo
+# lightwavego
 
-[![GoDoc](https://godoc.org/github.com/jimjibone/lwgo?status.svg)](https://godoc.org/github.com/jimjibone/lwgo) [![Build Status](https://travis-ci.org/jimjibone/lwgo.svg?branch=master)](https://travis-ci.org/jimjibone/lwgo)
+[![GoDoc](https://godoc.org/github.com/jimjibone/lightwavego?status.svg)](https://godoc.org/github.com/jimjibone/lightwavego) [![Build Status](https://travis-ci.org/jimjibone/lightwavego.svg?branch=master)](https://travis-ci.org/jimjibone/lightwavego)
 
 LightwaveRF library for the Raspberry Pi written in Go.
 
@@ -19,9 +19,9 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 ## Installation
 
 - [pigpio](http://abyz.co.uk/rpi/pigpio/download.html): This is required to control the GPIO pins on the Raspberry Pi
-- `go get github.com/jimjibone/lwgo`
+- `go get github.com/jimjibone/lightwavego`
 - `go get github.com/ant0ine/go-json-rest/rest` (required for `lwserver` only)
-- `go install github.com/jimjibone/lwgo/examples/...`
+- `go install github.com/jimjibone/lightwavego/examples/...`
 - `lwblink` and `lwserver` will now both be in your PATH
 
 
@@ -31,10 +31,10 @@ See [my C library](https://github.com/jimjibone/LightwaveRF) for the Raspberry P
 
 This is basically the blink example we all know from microelectronics except that this time it's using your houses lights and it is able to dim them.
 
-- `git clone https://github.com/jimjibone/lwgo.git`
-- `cd lwgo`
-- `go get github.com/jimjibone/lwgo` (if not done already)
-- `go install github.com/jimjibone/lwgo` (if not done already)
+- `git clone https://github.com/jimjibone/lightwavego.git`
+- `cd lightwavego`
+- `go get github.com/jimjibone/lightwavego` (if not done already)
+- `go install github.com/jimjibone/lightwavego` (if not done already)
 - `go build examples/lwblink/lwblink.go`
 - `sudo ./lwblink` (sudo required for GPIO access)
 

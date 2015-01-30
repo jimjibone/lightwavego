@@ -1,4 +1,4 @@
-package lwgo
+package lightwavego
 
 import "testing"
 
