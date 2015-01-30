@@ -1,6 +1,7 @@
-// This file should only build on the Raspberry Pi (linux && arm)
+// This file should only build on the Raspberry Pi (i.e. linux && arm)
+// +build linux,arm
 
-package lwgo
+package lightwavego
 
 /*
 #cgo CFLAGS: -std=c99
