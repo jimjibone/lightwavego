@@ -1,5 +1,5 @@
 // Don't build this file on Raspberry Pi (i.e. not arm)
-// +build !linux,!arm
+// +build !arm
 
 package lightwavego
 
